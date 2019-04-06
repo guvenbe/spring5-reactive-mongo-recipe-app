@@ -43,37 +43,27 @@ public class RecipeServiceImpl implements RecipeService {
 
         return recipeReactiveRepository.findById(id)
                 .map(recipe -> {
-                    RecipeCommand recipeCommand= recipeToRecipeCommand.convert(recipe);
+                    RecipeCommand recipeCommand = recipeToRecipeCommand.convert(recipe);
 
-                    recipeCommand.getIngredients().forEach(rc->{
+                    recipeCommand.getIngredients().forEach(rc -> {
                         rc.setRecipeId(recipeCommand.getId());
                     });
-                    return recipeCommand;
 
+                    return recipeCommand;
                 });
     }
 
-//        RecipeCommand recipeCommand = recipeToRecipeCommand.convert(findById(id).block());
-//
-//        //enhance command object with id value
-//        if(recipeCommand.getIngredients() != null && recipeCommand.getIngredients().size() > 0){
-//            recipeCommand.getIngredients().forEach(rc -> {
-//                rc.setRecipeId(recipeCommand.getId());
-//            });
-//        }
-//
-//        return recipeCommand;
-//    }
-
     @Override
-    public Mono<RecipeCommand> saveRecipeCommand(RecipeCommand command) {
+    public Mono<RecipeCommand>  saveRecipeCommand(RecipeCommand command) {
 
         return recipeReactiveRepository.save(recipeCommandToRecipe.convert(command))
                 .map(recipeToRecipeCommand::convert);
     }
 
     @Override
-    public void deleteById(String idToDelete) {
+    public Mono<Void> deleteById(String idToDelete) {
         recipeReactiveRepository.deleteById(idToDelete).block();
+
+        return Mono.empty();
     }
 }
